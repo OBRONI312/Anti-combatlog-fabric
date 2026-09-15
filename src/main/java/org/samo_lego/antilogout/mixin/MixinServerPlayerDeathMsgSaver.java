@@ -7,7 +7,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.world.GameRules;
+import net.minecraft.world.rule.GameRules;
 import org.samo_lego.antilogout.datatracker.LogoutRules;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -36,7 +36,7 @@ public abstract class MixinServerPlayerDeathMsgSaver {
     private void onDeath(DamageSource damageSource, CallbackInfo ci) {
         if (((LogoutRules) this).al_isFake()) {
             ServerWorld serverLevel = (ServerWorld) this.level();
-            boolean seeDeathMsgs = serverLevel.getGameRules().getBoolean(GameRules.SHOW_DEATH_MESSAGES);
+            boolean seeDeathMsgs = serverLevel.getGameRules().getValue(GameRules.SHOW_DEATH_MESSAGES);
 
             Text deathMsg;
             if (seeDeathMsgs) {

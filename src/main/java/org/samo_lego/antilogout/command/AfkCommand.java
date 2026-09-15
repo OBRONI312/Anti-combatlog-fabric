@@ -132,7 +132,7 @@ public class AfkCommand {
             player.networkHandler.disconnect(AntiLogout.AFK_MESSAGE);
             source.sendFeedback(() -> Text.literal("Set " + player.getName().getString() + " AFK for " + (timeLimit == -1 ? "unlimited" : (int) timeLimit) + " seconds."), false);
             if (config.general.debug) AntiLogout.LOGGER.info("[AFK] {} set {} AFK for {} seconds. (combat state: ALLOWED)", source.getName(), player.getName().getString(), (timeLimit == -1 ? "unlimited" : (int) timeLimit));
-            Objects.requireNonNull(player.getServer()).getPlayerManager().broadcast(
+            Objects.requireNonNull(player.getEntityWorld().getServer()).getPlayerManager().broadcast(
                 Text.literal(config.afk.afkBroadcastMessage.replace("{player}", player.getName().getString())), false);
             affected++;
         }

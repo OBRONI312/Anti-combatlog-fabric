@@ -6,12 +6,19 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
+import net.minecraft.command.permission.LeveledPermissionPredicate;
+import net.minecraft.command.permission.PermissionLevel;
 
 import java.util.concurrent.CompletableFuture;
 
 import static net.minecraft.server.command.CommandManager.literal;
 
 public class AntiLogoutCommand {
+    private static boolean hasPermissionLevel(ServerCommandSource source, int level) {
+        return source.getPermissions() instanceof LeveledPermissionPredicate permissions
+                && permissions.getLevel().isAtLeast(PermissionLevel.fromLevel(level));
+    }
+
     private static final String[] OPTIONS = {
             "disableAllLogouts",
             "combatTimeout",
@@ -139,7 +146,7 @@ public class AntiLogoutCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(
             CommandManager.literal("antilogout")
-                .requires(source -> source.hasPermissionLevel(4))
+                .requires(source -> hasPermissionLevel(source, 4))
                 .then(CommandManager.literal("help")
                     .executes(ctx -> {
                         ctx.getSource().sendFeedback(() -> Text.literal(
@@ -154,7 +161,7 @@ public class AntiLogoutCommand {
                     })
                 )
                 .then(CommandManager.literal("reload")
-                    .requires(source -> source.hasPermissionLevel(2))
+                    .requires(source -> hasPermissionLevel(source, 2))
                     .executes(ctx -> {
                         org.samo_lego.antilogout.config.ConfigManager.load();
                         ctx.getSource().sendFeedback(() -> Text.literal("AntiLogout config reloaded! (All changes applied immediately.)"), true);
@@ -186,7 +193,7 @@ public class AntiLogoutCommand {
                     )
                 )
                 .then(CommandManager.literal("set")
-                    .requires(source -> source.hasPermissionLevel(2))
+                    .requires(source -> hasPermissionLevel(source, 2))
                     .then(CommandManager.argument("option", StringArgumentType.word())
                         .suggests(CONFIG_OPTION_SUGGESTIONS)
                         .then(CommandManager.argument("value", StringArgumentType.greedyString())

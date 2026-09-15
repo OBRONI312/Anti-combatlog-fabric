@@ -33,7 +33,7 @@ public abstract class MixinConnection {
                 // Suppress combat log message if AFK disconnect
                 if (!rules.al_isAfkDisconnect()) {
                     var player = listener.getPlayer();
-                    var server = player.getServer();
+                    var server = player.getEntityWorld().getServer();
                     if (server != null) {
                         server.getPlayerManager().broadcast(
                                 net.minecraft.text.Text
