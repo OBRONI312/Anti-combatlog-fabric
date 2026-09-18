@@ -16,12 +16,14 @@ import net.minecraft.util.Formatting;
 public interface LogoutRules {
     /**
      * Sets whether this disconnect was triggered by the AFK command.
+     *
      * @param afk true if disconnect is AFK-triggered, false otherwise
      */
     void al_setAfkDisconnect(boolean afk);
 
     /**
      * Checks if the disconnect was triggered by the AFK command.
+     *
      * @return true if AFK disconnect, false otherwise
      */
     boolean al_isAfkDisconnect();
@@ -35,18 +37,21 @@ public interface LogoutRules {
 
     /**
      * Checks whether the player is currently allowed to disconnect without leaving a dummy.
+     *
      * @return true if allowed, false otherwise
      */
     boolean al_allowDisconnect();
 
     /**
      * Sets the system time (in ms) when the player is allowed to disconnect without leaving a dummy.
+     *
      * @param systemTime time in milliseconds when disconnect is allowed
      */
     void al_setAllowDisconnectAt(long systemTime);
 
     /**
      * Sets whether the player can disconnect immediately.
+     *
      * @param allow true to allow immediate disconnect, false otherwise
      */
     void al_setAllowDisconnect(boolean allow);
@@ -56,18 +61,35 @@ public interface LogoutRules {
      *
      * @param systemTime time in milliseconds at which the player leaves state.
      */
+
     default void al_setInCombatUntil(long systemTime) {
-        this.al_setAllowDisconnectAt(systemTime);
+        boolean wasAlreadyInCombat = al_isInCombat();
+
+        al_setAllowDisconnectAt(systemTime);
 
         if (AntiLogout.config.combatLog.notifyOnCombat) {
-            // Notify player about entering combat
-            long duration = (long) Math.ceil((systemTime - System.currentTimeMillis()) / 1000.0D);
-            ((ServerPlayerEntity) this).sendMessage(this.al$getStartCombatMessage(duration), true);
+            long duration = (long) Math.ceil(
+                    (systemTime - System.currentTimeMillis()) / 1000.0D
+            );
 
-            this.al$delay(systemTime,
-                    () -> ((ServerPlayerEntity) this).sendMessage(this.al$getEndCombatMessage(duration), true));
+            if (!wasAlreadyInCombat) {
+                // Chat message shown once when combat starts
+                if (AntiLogout.config.combatLog.combatWarningEnabled) {
+                    ((ServerPlayerEntity) this).sendMessage(
+                            Text.literal(AntiLogout.config.combatLog.combatWarningMessage),
+                            false
+                    );
+                }
+
+                // Action-bar combat timer/message
+                ((ServerPlayerEntity) this).sendMessage(
+                        this.al$getStartCombatMessage(duration),
+                        true
+                );
+            }
         }
     }
+
 
     /**
      * Schedules a task to be executed after the specified system time (in ms).
@@ -83,11 +105,14 @@ public interface LogoutRules {
      * @return the combat start message
      */
     @ApiStatus.Internal
-    default Text al$getStartCombatMessage(long duration) {
-        return Text.literal("[AL] ").formatted(Formatting.DARK_RED).append(
-                Text.translatable(AntiLogout.config.combatLog.combatEnterMessage, duration)
-                        .formatted(Formatting.RED));
-    }
+        default Text al$getStartCombatMessage(long duration) {
+            String message = AntiLogout.config.combatLog.combatEnterMessage
+                    .replace("{time}", String.valueOf(duration));
+
+            return Text.literal("[AL] ")
+                    .formatted(Formatting.DARK_RED)
+                    .append(Text.literal(message).formatted(Formatting.RED));
+        }
 
     /**
      * Returns the combat end message for the player.
@@ -117,5 +142,10 @@ public interface LogoutRules {
      * Used for updating timers on config reload.
      * @return system time in ms when disconnect is allowed
      */
+
+    default boolean al_isInCombat() {
+        return al_getAllowDisconnectTime() > System.currentTimeMillis();
+    }
+
     long al_getAllowDisconnectTime();
 }

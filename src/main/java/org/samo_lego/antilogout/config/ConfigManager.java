@@ -40,6 +40,8 @@ public class ConfigManager {
         config.combatLog.playerHurtOnly = configData.getOrElse("combatLog.playerHurtOnly", config.combatLog.playerHurtOnly);
         config.combatLog.bypassPermissionLevel = configData.getOrElse("combatLog.bypassPermissionLevel", config.combatLog.bypassPermissionLevel);
         config.combatLog.combatDisconnectMessage = configData.getOrElse("combatLog.combatDisconnectMessage", config.combatLog.combatDisconnectMessage);
+        config.combatLog.combatWarningEnabled = configData.getOrElse("combatLog.combatWarningEnabled", config.combatLog.combatWarningEnabled);
+        config.combatLog.combatWarningMessage = configData.getOrElse("combatLog.combatWarningMessage", config.combatLog.combatWarningMessage);
         // Always save to ensure correct structure
         save();
     }
@@ -80,6 +82,10 @@ public class ConfigManager {
         configData.set("combatLog.bypassPermissionLevel", config.combatLog.bypassPermissionLevel);
         configData.setComment("combatLog.combatDisconnectMessage", "Message for combat log disconnect");
         configData.set("combatLog.combatDisconnectMessage", config.combatLog.combatDisconnectMessage);
+        configData.setComment("combatLog.combatWarningEnabled", "Send a warning when a player first enters combat");
+        configData.set("combatLog.combatWarningEnabled", config.combatLog.combatWarningEnabled);
+        configData.setComment("combatLog.combatWarningMessage", "Warning shown when entering combat");
+        configData.set("combatLog.combatWarningMessage", config.combatLog.combatWarningMessage);
         configData.save();
     }
 
@@ -100,12 +106,14 @@ public class ConfigManager {
         }
         public static class CombatLog {
             public boolean notifyOnCombat = true;
-            public String combatEnterMessage = "You are in combat!";
+            public String combatEnterMessage = "You are in combat! for {time}";
             public String combatEndMessage = "You are no longer in combat!";
             public int combatTimeout = 30;
             public boolean playerHurtOnly = true;
             public int bypassPermissionLevel = 4;
             public String combatDisconnectMessage = "disconnected while in combat!";
+            public boolean combatWarningEnabled = true;
+            public String combatWarningMessage = "You are now in combat. Leaving the server will keep you in the server until combat ends!";
         }
     }
 }

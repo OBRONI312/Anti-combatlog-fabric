@@ -23,9 +23,6 @@ public abstract class MixinServerPlayerDeathMsgSaver {
     @Unique
     private final ServerPlayerEntity self = (ServerPlayerEntity) (Object) this;
 
-    @Unique
-    public abstract net.minecraft.world.World level();
-
     /**
      * Injects into the player death handler to save death messages for fake/disconnected players.
      * Stores the message in SKIPPED_DEATH_MESSAGES for later display.
@@ -35,7 +32,7 @@ public abstract class MixinServerPlayerDeathMsgSaver {
     @Inject(method = "onDeath", at = @At("RETURN"))
     private void onDeath(DamageSource damageSource, CallbackInfo ci) {
         if (((LogoutRules) this).al_isFake()) {
-            ServerWorld serverLevel = (ServerWorld) this.level();
+            ServerWorld serverLevel = (ServerWorld) self.getEntityWorld();
             boolean seeDeathMsgs = serverLevel.getGameRules().getValue(GameRules.SHOW_DEATH_MESSAGES);
 
             Text deathMsg;

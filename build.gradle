@@ -12,6 +12,7 @@ base {
 }
 
 repositories {
+	mavenCentral()
 	maven { url = 'https://maven.fabricmc.net/' }
 	maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
 	maven { url = 'https://jitpack.io' }
@@ -71,8 +72,10 @@ jar {
 	}
 }
 
+def shadowOnlyConfiguration = configurations.shadowOnly
+
 shadowJar {
-    configurations = [project.configurations.shadowOnly]
+    configurations = [shadowOnlyConfiguration]
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     relocate 'com.electronwill.nightconfig', 'org.samo_lego.antilogout.shadow.nightconfig'
 }
