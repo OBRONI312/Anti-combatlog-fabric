@@ -9,7 +9,7 @@ on:
   pull_request:
   push:
     branches:
-      - 1.21-1.21.11
+      - 26-26.3
 
 jobs:
   qodana:

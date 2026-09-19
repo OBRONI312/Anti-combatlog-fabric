@@ -10,7 +10,7 @@
 
 **AntiLogout** is a server-side mod that prevents players from escaping combat by logging out[cite: 1]. When a player logs out during combat, their "body" remains online for a configurable amount of time, making combat logging impossible[cite: 1]. The mod also provides a flexible `/afk` command to safely go AFK for farming or other purposes[cite: 1].
 
-**Supported Minecraft versions:** Fabric servers running Minecraft 1.21 through 1.21.11[cite: 1].
+**Supported Minecraft version:** Fabric servers running Minecraft 26.3[cite: 1].
 
 ---
 
